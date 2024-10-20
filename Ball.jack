@@ -1,0 +1,140 @@
+class Ball {
+    field Platform platform;
+    field int xPos;
+    field int yPos;
+    field int dX;
+    field int dY;
+    field boolean isFallen;
+    field int radius;
+    field int minimumSpeed;
+
+    field boolean canMove;
+
+    constructor Ball new(int r, Platform p) {
+        let platform = p;
+        let radius = r;
+        let minimumSpeed = 1;
+        let dX = -2;
+        let dY = -2;
+        let yPos = platform.getSurfaceY() - radius;
+        let xPos = platform.getSurfaceMiddle();
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawCircle(xPos, yPos, radius);
+        do Screen.setColor(true);
+        return;
+    }
+
+    method void draw() {
+        do Screen.drawCircle(xPos, yPos, radius);
+        return;
+    }
+
+    method void allowMove() {
+        let canMove = true;
+        return;
+    }
+
+    method boolean checkIsFallen() {
+        return isFallen;
+    }
+
+    method void processCollisionWithPlatform() {
+        var int platformLeftX, platformRightX, middle, partDistance, ballXDistanceToMiddle, delta, platformSurface, platformBottom;
+        let platformLeftX = platform.getLeftX();
+        let platformRightX = platform.getRightX();
+        let platformSurface = platform.getSurfaceY();
+        let platformBottom = platform.getBottom();
+        if ((xPos > platformLeftX) & (xPos < platformRightX) & (yPos + radius > platformSurface & (yPos < platformSurface))) {
+            let middle = platform.getSurfaceMiddle();
+            let partDistance = (middle - platformLeftX) / 3;
+            let ballXDistanceToMiddle = Helper.abs(middle - xPos);
+            let delta = ballXDistanceToMiddle / partDistance + 1;
+            let dY = -dY;
+            let dX = Helper.updateDx(dX, delta + minimumSpeed);
+        }
+        if ((yPos > platformSurface) & (yPos < platformBottom) & ((xPos + radius) > platformLeftX) & ((xPos + radius) < platformRightX)) {
+            let dX = -dX;
+        }
+        if ((yPos > platformSurface) & (yPos < platformBottom) & ((xPos - radius) < platformRightX) & ((xPos - radius) > platformLeftX)) {
+            let dX = -dX;
+        }
+        return;
+    }
+
+    method void moveAndCheck() {
+        var int xRadius, yRadius;
+        let yRadius = Helper.helpCalculateRadiusSign(dY, radius);
+        let xRadius = Helper.helpCalculateRadiusSign(dX, radius);
+        if (xPos + dX + xRadius > 511) {
+            let dX = -dX;
+        }
+        if (xPos + dX + xRadius < 0) {
+            let dX = -dX;
+        }
+        if (yPos + dY + yRadius < 0) {
+            let dY = -dY;
+        }
+        if (yPos + dY + yRadius > 255) {
+            let isFallen = true;
+            return;
+        }
+        let xPos = xPos + dX;
+        let yPos = yPos + dY;
+        do processCollisionWithPlatform();
+        return;
+    }
+
+    method void move() {
+        if (~canMove) {
+            return;
+        }
+        do erase();
+        do moveAndCheck();
+        do draw();
+        return;
+    }
+
+    method int getCenterX() {
+        return xPos;
+    }
+
+    method int getCenterY() {
+        return yPos;
+    }
+
+    method int getLeft() {
+        return xPos - radius;
+    }
+
+    method int getRight() {
+        return xPos + radius;
+    }
+
+    method int getUp() {
+        return yPos - radius;
+    }
+
+    method int getDown() {
+        return yPos + radius;
+    }
+
+    method void applyBrickCollision(int x, int y) {
+        let dX = dX * x;
+        let dY = dY * y;
+        return;
+    }
+
+    method void applySpeed(int speed) {
+        let minimumSpeed = speed;
+        return;
+    }
+}

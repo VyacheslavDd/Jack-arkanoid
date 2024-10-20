@@ -1,0 +1,85 @@
+class Brick {
+
+    field int xPos;
+    field int yPos;
+    field int length;
+    field int height;
+    field int requiredHitAmount;
+    field int currentHitAmount;
+    field boolean isDestroyed;
+
+    field Ball ball;
+
+    constructor Brick new(int x, int y, int l, int h, int hits, Ball b) {
+        let xPos = x;
+        let yPos = y;
+        let length = l;
+        let height = h;
+        let requiredHitAmount = hits;
+        let ball = b;
+        do draw();
+        return this;
+    }
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(xPos, yPos, xPos + length, yPos + height);
+        do Screen.setColor(true);
+        return;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void draw() {
+        do Screen.drawRectangle(xPos, yPos, xPos + length, yPos + height);
+        return;
+    }
+
+    method void checkCollisionWithBall() {
+        var int ballX, ballY, ballLeft, ballRight, ballUp, ballDown;
+        let ballX = ball.getCenterX();
+        let ballY = ball.getCenterY();
+        let ballLeft = ball.getLeft();
+        let ballRight = ball.getRight();
+        let ballUp = ball.getUp();
+        let ballDown = ball.getDown();
+        if ((ballX > xPos) & (ballX < (xPos + length)) & (ballUp < (yPos + height)) & (ballUp > yPos)) {
+            let currentHitAmount = currentHitAmount + 1;
+            do ball.applyBrickCollision(1, -1);
+        }
+        if ((ballX > xPos) & (ballX < (xPos + length)) & (ballDown > yPos) & (ballDown < (yPos + height))) {
+            let currentHitAmount = currentHitAmount + 1;
+            do ball.applyBrickCollision(1, -1);
+        }
+        if ((ballY > yPos) & (ballY < (yPos + height)) & (ballLeft < (xPos + length)) & (ballLeft > xPos)) {
+             let currentHitAmount = currentHitAmount + 1;
+            do ball.applyBrickCollision(-1, 1);
+        }
+        if ((ballY > yPos) & (ballY < (yPos + height)) & (ballRight > xPos) & (ballRight < (xPos + length))) {
+             let currentHitAmount = currentHitAmount + 1;
+            do ball.applyBrickCollision(-1, 1);
+        }
+        return;
+    }
+
+    method void update() {
+        if (isDestroyed) {
+         return;
+        }
+        do checkCollisionWithBall();
+        if ((currentHitAmount = requiredHitAmount) | (currentHitAmount > requiredHitAmount)) {
+            let isDestroyed = true;
+            do erase();
+            return;
+        }
+        do draw();
+        return;
+    }
+
+    method boolean gotDestroyed() {
+        return isDestroyed;
+    }
+}

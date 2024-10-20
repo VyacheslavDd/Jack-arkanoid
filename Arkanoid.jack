@@ -1,0 +1,141 @@
+class Arkanoid {
+    
+    field Platform platform;
+    field Ball ball;
+    field boolean gameOver;
+    field boolean gameWon;
+    field boolean gameLost;
+    field Array bricksArray;
+    field int bricksCount;
+    field int partToIncreaseSpeed;
+    field int direction;
+
+    constructor Arkanoid new() {
+        do Screen.setColor(true);
+        let direction = 0;
+        let platform = Platform.new(50, 10);
+        let ball = Ball.new(7, platform);
+        let bricksArray = LevelCreator.createLevelOne(ball);
+        let bricksCount = LevelCreator.getLevelOneBrickCount();
+        let partToIncreaseSpeed = bricksCount / 3;
+        return this;
+    }
+
+    method void dispose() {
+        do ball.dispose();
+        do platform.dispose();
+        do disposeBricks();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void disposeBricks() {
+        var int counter;
+        var Brick brick;
+        while (~(counter = bricksCount)) {
+            let brick = bricksArray[counter];
+            do brick.dispose();
+            let counter = counter + 1;
+        }
+        return;
+    }
+
+    method void update() {
+        do movePlatform();
+        do ball.move();
+        do updateBrickArray();
+        if (ball.checkIsFallen()) {
+            let gameOver = true;
+            let gameLost = true;
+            return;
+        }
+        do Sys.wait(5);
+        return;
+    }
+
+    method void setGameLost() {
+        let gameOver = true;
+        let gameLost = true;
+        return;
+    }
+
+    method void updateBrickArray() {
+        var Brick brick;
+        var int counter, destroyedBlocks, speedApplier;
+        while (~(counter = bricksCount)) {
+            let brick = bricksArray[counter];
+            do brick.update();
+            let counter = counter + 1;
+            if (brick.gotDestroyed()) {
+                let destroyedBlocks = destroyedBlocks + 1;
+            }
+        }
+        let speedApplier = destroyedBlocks / partToIncreaseSpeed + 1;
+        do ball.applySpeed(speedApplier);
+        if (destroyedBlocks = bricksCount) {
+            let gameOver = true;
+            let gameWon = true;
+        }
+        return;
+    }
+
+    method void showGameResult() {
+        if (gameLost) {
+            do Helper.output("Better luck next time! Press any key to quit...");
+        }
+        if (gameWon) {
+            do Helper.output("Nice job! You can try other levels.");
+        }
+        do Keyboard.readChar();
+        do Screen.clearScreen();
+        return;
+    }
+
+    method void run() {
+        var boolean hasStarted;
+        var char key;
+
+        do Helper.output("Press ENTER to start!");
+        while (~gameOver) {
+            while ((key = 0) & (~gameOver)) {
+                let direction = 0;
+                let key = Keyboard.keyPressed();
+                do update();
+            }
+            if (key = 128 & ~hasStarted) {
+                let hasStarted = true;
+                do Screen.clearScreen();
+                do ball.allowMove();
+            }
+            if (key = 81 & hasStarted) {
+                let gameOver = true; 
+            }
+            if (key = 65 & hasStarted) {
+                let direction = 1;
+            }
+            if (key = 68 & hasStarted) {
+                let direction = 2;
+            }
+            while (~(key = 0) & (~gameOver)) {
+                let key = Keyboard.keyPressed();
+                do update();
+            }
+        }
+        do Screen.clearScreen();
+        do showGameResult();
+        return;
+    }
+
+    method void movePlatform() {
+        if (direction = 0) {
+            do platform.draw();
+        }
+        if (direction = 1) {
+            do platform.moveLeft();
+        }
+        if (direction = 2) {
+            do platform.moveRight();
+        }
+        return;
+    }
+}

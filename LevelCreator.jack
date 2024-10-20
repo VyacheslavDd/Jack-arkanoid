@@ -1,0 +1,36 @@
+class LevelCreator {
+
+    static int levelOneBrickCount;
+
+    function Array createLevelOne(Ball ball) {
+        var int rowsCount, currentRow, colsCount, currentCol, colGap, rowGap, curX, curY, counter;
+        var boolean isEvenRow;
+        var Array bricksArray;
+        let rowsCount = 5;
+        let rowGap = 5;
+        let colGap = 5;
+        let curX = 6;
+        let curY = 30;
+        let colsCount = (511 - (curX * 2)) / (40 + colGap);
+        let levelOneBrickCount = rowsCount * colsCount;
+        let bricksArray = Array.new(LevelCreator.getLevelOneBrickCount());
+        while (currentRow < rowsCount) {
+            let isEvenRow = Helper.isEven(currentRow);
+            let curY = 30 + ((10 + rowGap) * currentRow);
+            while (currentCol < colsCount) {
+                let curX = 6 + ((40 + colGap) * currentCol);
+                let bricksArray[counter] = Brick.new(curX, curY, 40, 10, /*Helper.getHitsOnRow(isEvenRow)*/ 1, ball);
+                let counter = counter + 1;
+                let currentCol = currentCol + 1;
+            }
+            let curX = 6;
+            let currentCol = 0;
+            let currentRow = currentRow + 1;
+        }
+        return bricksArray;
+    }
+
+    function int getLevelOneBrickCount() {
+        return levelOneBrickCount;
+    }
+}

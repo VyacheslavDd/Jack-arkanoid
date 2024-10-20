@@ -1,0 +1,71 @@
+class Platform {
+    field int length;
+    field int height;
+    field int xPos;
+    field int yPos;
+
+    constructor Platform new(int xSize, int ySize) {
+        var int middle;
+        let length = xSize;
+        let height = ySize;
+        let yPos = 235;
+        let middle = length / 2;
+        let xPos = 256 - middle;
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void draw() {
+        do Screen.drawRectangle(xPos, yPos, xPos + length, yPos + height);
+        return;
+    }
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(xPos, yPos, xPos + length, yPos + height);
+        do Screen.setColor(true);
+        return;
+    }
+
+    method void moveRight() {
+        if ((xPos + length + 5) < 511) {
+            do erase();
+            let xPos = xPos + 5;
+            do draw();
+        }
+        return;
+    }
+
+    method void moveLeft() {
+        if ((xPos - 5) > -1) {
+            do erase();
+            let xPos = xPos - 5;
+            do draw();
+        }
+        return;
+    }
+
+    method int getSurfaceY() {
+        return yPos;
+    }
+
+    method int getBottom() {
+        return yPos + height;
+    }
+    
+    method int getSurfaceMiddle() {
+        return xPos + (length / 2);
+    }
+
+    method int getLeftX() {
+        return xPos;
+    }
+
+    method int getRightX() {
+        return xPos + length;
+    }
+}

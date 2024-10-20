@@ -1,0 +1,9 @@
+class Main {
+    function void main() {
+        var Arkanoid arkanoid;
+        let arkanoid = Arkanoid.new();
+        do arkanoid.run();
+        do arkanoid.dispose();
+        return;
+    }
+}
