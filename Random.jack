@@ -1,0 +1,22 @@
+class Random {
+    static int seed;
+
+    function void setSeed(int seedValue) {
+        let seed = seedValue;
+        return;
+    }
+    
+    function int random() {
+        let seed = (seed * 153 + 459);
+        let seed = Helper.getRemainderFromDivision(seed, 553);
+        return seed;
+    }
+
+    function int range(int min, int max) {
+        var int span, value;
+        let span = max - min + 1;
+        let value = Random.random();
+        let value = min + Helper.getRemainderFromDivision(value, span);
+        return value;
+    }
+}

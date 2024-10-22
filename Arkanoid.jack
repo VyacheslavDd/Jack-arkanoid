@@ -9,14 +9,15 @@ class Arkanoid {
     field int bricksCount;
     field int partToIncreaseSpeed;
     field int direction;
+    field int seed;
 
     constructor Arkanoid new() {
+        do Random.setSeed(1);
         do Screen.setColor(true);
         let direction = 0;
         let platform = Platform.new(50, 10);
         let ball = Ball.new(7, platform);
-        let bricksArray = LevelCreator.createLevelOne(ball);
-        let bricksCount = LevelCreator.getLevelOneBrickCount();
+        do setupLevel();
         let partToIncreaseSpeed = bricksCount / 3;
         return this;
     }
@@ -91,10 +92,20 @@ class Arkanoid {
         return;
     }
 
+    method void setupLevel() {
+        var int seed, level;
+        do Output.moveCursor(15, 10);
+        let seed = Keyboard.readInt("Seed: ");
+        do Random.setSeed(seed);
+        let level = Random.range(1, 3);
+        let bricksArray = LevelCreator.getLevel(level, ball);
+        let bricksCount = LevelCreator.getLevelCount(level);
+        return;
+    }
+
     method void run() {
         var boolean hasStarted;
         var char key;
-
         do Helper.output("Press ENTER to start!");
         while (~gameOver) {
             while ((key = 0) & (~gameOver)) {

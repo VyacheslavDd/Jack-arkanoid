@@ -56,9 +56,12 @@ class Ball {
         if ((xPos > platformLeftX) & (xPos < platformRightX) & (yPos + radius > platformSurface & (yPos < platformSurface))) {
             let middle = platform.getSurfaceMiddle();
             let partDistance = (middle - platformLeftX) / 3;
-            let ballXDistanceToMiddle = Helper.abs(middle - xPos);
-            let delta = ballXDistanceToMiddle / partDistance + 1;
+            let ballXDistanceToMiddle = middle - xPos;
+            let delta = Helper.abs(ballXDistanceToMiddle) / partDistance + 1;
             let dY = -dY;
+            if (~(((dX > 0) & (ballXDistanceToMiddle < 0)) | ((dX < 0) & (ballXDistanceToMiddle > 0)))) {
+                let dX = -dX;
+            }
             let dX = Helper.updateDx(dX, delta + minimumSpeed);
         }
         if ((yPos > platformSurface) & (yPos < platformBottom) & ((xPos + radius) > platformLeftX) & ((xPos + radius) < platformRightX)) {

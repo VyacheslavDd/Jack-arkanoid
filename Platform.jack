@@ -1,12 +1,14 @@
 class Platform {
     field int length;
     field int height;
+    field int initialLength;
     field int xPos;
     field int yPos;
 
     constructor Platform new(int xSize, int ySize) {
         var int middle;
         let length = xSize;
+        let initialLength = xSize;
         let height = ySize;
         let yPos = 235;
         let middle = length / 2;
@@ -67,5 +69,15 @@ class Platform {
 
     method int getRightX() {
         return xPos + length;
+    }
+
+    method void makeSmaller() {
+        let length = initialLength - 20;
+        return;
+    }
+
+    method void makeBigger() {
+        let length = initialLength + 20;
+        return;
     }
 }
