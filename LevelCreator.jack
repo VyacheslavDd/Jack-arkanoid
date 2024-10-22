@@ -4,7 +4,7 @@ class LevelCreator {
     static int levelTwoBrickCount;
     static int levelThreeBrickCount;
 
-    function Array createLevelOne(Ball ball, Platform platform) {
+    function Array createLevelOne(Array balls, Platform platform) {
         var int rowsCount, currentRow, colsCount, currentCol, colGap, rowGap, curX, curY, counter;
         var boolean isEvenRow;
         var Array bricksArray;
@@ -21,7 +21,7 @@ class LevelCreator {
             let curY = 30 + ((10 + rowGap) * currentRow);
             while (currentCol < colsCount) {
                 let curX = 6 + ((40 + colGap) * currentCol);
-                let bricksArray[counter] = Brick.new(curX, curY, 40, 10, /*Helper.getHitsOnRow(isEvenRow)*/ 1, ball, platform);
+                let bricksArray[counter] = Brick.new(curX, curY, 40, 10, /*Helper.getHitsOnRow(isEvenRow)*/ 1, balls, platform);
                 let counter = counter + 1;
                 let currentCol = currentCol + 1;
             }
@@ -32,7 +32,7 @@ class LevelCreator {
         return bricksArray;
     }
 
-    function Array createLevelTwo(Ball ball, Platform platform) {
+    function Array createLevelTwo(Array balls, Platform platform) {
         var int rowsCount, curX, curY, evenRowDelta, curRow, curCol, counter, colGap, curColsCount;
         var boolean isEvenRow;
         var Array bricksArray;
@@ -53,7 +53,7 @@ class LevelCreator {
             }
             let curY = 30 + (10 * curRow);
             while (curCol < curColsCount) {
-                let bricksArray[counter] = Brick.new(curX, curY, 30, 10, 1, ball, platform);
+                let bricksArray[counter] = Brick.new(curX, curY, 30, 10, 1, balls, platform);
                 let counter = counter + 1;
                 let curCol = curCol + 1;
                 let curX = curX + colGap;
@@ -66,7 +66,7 @@ class LevelCreator {
         return bricksArray;
     }
 
-    function Array createLevelThree(Ball ball, Platform platform) {
+    function Array createLevelThree(Array balls, Platform platform) {
         var int rowsCount, colsCount, colGap, rowGap, curX, curY, counter, curCol, curRow;
         var Array bricksArray;
         let rowsCount = 7;
@@ -81,7 +81,7 @@ class LevelCreator {
             let curX = 10 + (colGap * curCol);
             while (curRow < rowsCount) {
                 let curY = 30 + ((10 + rowGap) * curRow);
-                let bricksArray[counter] = Brick.new(curX, curY, 40, 10, 1, ball, platform);
+                let bricksArray[counter] = Brick.new(curX, curY, 40, 10, 1, balls, platform);
                 let counter = counter + 1;
                 let curRow = curRow + 1;
             }
@@ -103,15 +103,15 @@ class LevelCreator {
         return levelThreeBrickCount;
     }
 
-    function Array getLevel(int value, Ball ball, Platform platform) {
+    function Array getLevel(int value, Array balls, Platform platform) {
         if (value = 1) {
-            return LevelCreator.createLevelOne(ball, platform);
+            return LevelCreator.createLevelOne(balls, platform);
         }
         if (value = 2) {
-            return LevelCreator.createLevelTwo(ball, platform);
+            return LevelCreator.createLevelTwo(balls, platform);
         }
         else {
-            return LevelCreator.createLevelThree(ball, platform);
+            return LevelCreator.createLevelThree(balls, platform);
         }
     }
 

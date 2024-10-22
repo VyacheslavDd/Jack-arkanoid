@@ -3,6 +3,7 @@ class Platform {
     field int height;
     field int initialLength;
     field int xPos;
+    field int ballsCount;
     field int yPos;
 
     constructor Platform new(int xSize, int ySize) {
@@ -81,5 +82,14 @@ class Platform {
         do erase();
         let length = initialLength + 20;
         return;
+    }
+
+    method void updateBallsCount(int count) {
+        let ballsCount = count;
+        return;
+    }
+
+    method int getBallsCount() {
+        return ballsCount;
     }
 }

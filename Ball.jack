@@ -88,6 +88,9 @@ class Ball {
         }
         if (yPos + dY + yRadius > 255) {
             let isFallen = true;
+            do erase();
+            let canMove = false;
+
             return;
         }
         let xPos = xPos + dX;

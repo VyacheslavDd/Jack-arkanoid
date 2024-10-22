@@ -9,19 +9,19 @@ class Brick {
     field boolean isDestroyed;
     field Bonus bonus;
     field Platform platform;
-    field Ball ball;
+    field Array balls;
 
-    constructor Brick new(int x, int y, int l, int h, int hits, Ball b, Platform p) {
+    constructor Brick new(int x, int y, int l, int h, int hits, Array bs, Platform p) {
         var int value;
         let xPos = x;
         let yPos = y;
         let length = l;
         let height = h;
         let requiredHitAmount = hits;
-        let ball = b;
+        let balls = bs;
         let platform = p;
         let value = Random.range(1, 10);
-        if (value > 8) {
+        if (value > 9) {
             let bonus = Bonus.new((xPos + (length / 2)), yPos, platform);
         }
         do draw();
@@ -48,29 +48,35 @@ class Brick {
         return;
     }
 
-    method void checkCollisionWithBall() {
-        var int ballX, ballY, ballLeft, ballRight, ballUp, ballDown;
-        let ballX = ball.getCenterX();
-        let ballY = ball.getCenterY();
-        let ballLeft = ball.getLeft();
-        let ballRight = ball.getRight();
-        let ballUp = ball.getUp();
-        let ballDown = ball.getDown();
-        if ((ballX > xPos) & (ballX < (xPos + length)) & (ballUp < (yPos + height)) & (ballUp > yPos)) {
-            let currentHitAmount = currentHitAmount + 1;
-            do ball.applyBrickCollision(1, -1);
-        }
-        if ((ballX > xPos) & (ballX < (xPos + length)) & (ballDown > yPos) & (ballDown < (yPos + height))) {
-            let currentHitAmount = currentHitAmount + 1;
-            do ball.applyBrickCollision(1, -1);
-        }
-        if ((ballY > yPos) & (ballY < (yPos + height)) & (ballLeft < (xPos + length)) & (ballLeft > xPos)) {
-             let currentHitAmount = currentHitAmount + 1;
-            do ball.applyBrickCollision(-1, 1);
-        }
-        if ((ballY > yPos) & (ballY < (yPos + height)) & (ballRight > xPos) & (ballRight < (xPos + length))) {
-             let currentHitAmount = currentHitAmount + 1;
-            do ball.applyBrickCollision(-1, 1);
+    method void checkCollisionWithBalls() {
+        var int ballX, ballY, ballLeft, ballRight, ballUp, ballDown, counter, ballsCount;
+        var Ball ball;
+        let ballsCount = platform.getBallsCount();
+        while (~(counter = ballsCount)) {
+            let ball = balls[counter];
+            let ballX = ball.getCenterX();
+            let ballY = ball.getCenterY();
+            let ballLeft = ball.getLeft();
+            let ballRight = ball.getRight();
+            let ballUp = ball.getUp();
+            let ballDown = ball.getDown();
+            if ((ballX > xPos) & (ballX < (xPos + length)) & (ballUp < (yPos + height)) & (ballUp > yPos)) {
+                let currentHitAmount = currentHitAmount + 1;
+                do ball.applyBrickCollision(1, -1);
+            }
+            if ((ballX > xPos) & (ballX < (xPos + length)) & (ballDown > yPos) & (ballDown < (yPos + height))) {
+                let currentHitAmount = currentHitAmount + 1;
+                do ball.applyBrickCollision(1, -1);
+            }
+            if ((ballY > yPos) & (ballY < (yPos + height)) & (ballLeft < (xPos + length)) & (ballLeft > xPos)) {
+                let currentHitAmount = currentHitAmount + 1;
+                do ball.applyBrickCollision(-1, 1);
+            }
+            if ((ballY > yPos) & (ballY < (yPos + height)) & (ballRight > xPos) & (ballRight < (xPos + length))) {
+                let currentHitAmount = currentHitAmount + 1;
+                do ball.applyBrickCollision(-1, 1);
+            }
+            let counter = counter + 1;
         }
         return;
     }
@@ -82,7 +88,7 @@ class Brick {
          }
          return;
         }
-        do checkCollisionWithBall();
+        do checkCollisionWithBalls();
         if ((currentHitAmount = requiredHitAmount) | (currentHitAmount > requiredHitAmount)) {
             let isDestroyed = true;
             do bonus.onBrickDestroy();

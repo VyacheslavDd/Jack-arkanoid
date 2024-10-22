@@ -1,11 +1,12 @@
 class Arkanoid {
     
     field Platform platform;
-    field Ball ball;
+    field Array balls;
     field boolean gameOver;
     field boolean gameWon;
     field boolean gameLost;
     field Array bricksArray;
+    field int ballsCount;
     field int bricksCount;
     field int partToIncreaseSpeed;
     field int direction;
@@ -16,7 +17,10 @@ class Arkanoid {
         do Screen.setColor(true);
         let direction = 0;
         let platform = Platform.new(50, 10);
-        let ball = Ball.new(7, platform);
+        let balls = Array.new(3);
+        let balls[0] = Ball.new(7, platform);
+        let ballsCount = 1;
+        do platform.updateBallsCount(ballsCount);
         do Bonus.setupBonuses();
         do setupLevel();
         let partToIncreaseSpeed = bricksCount / 3;
@@ -24,10 +28,21 @@ class Arkanoid {
     }
 
     method void dispose() {
-        do ball.dispose();
+        do disposeBalls();
         do platform.dispose();
         do disposeBricks();
         do Memory.deAlloc(this);
+        return;
+    }
+
+    method void disposeBalls() {
+        var int counter;
+        var Ball ball;
+        while (~(counter = ballsCount)) {
+            let ball = balls[counter];
+            do ball.dispose();
+            let counter = counter + 1;
+        }
         return;
     }
 
@@ -44,21 +59,76 @@ class Arkanoid {
 
     method void applyBonuses() {
         do BonusBroker.applyPlatformBonuses(platform);
+        do BonusBroker.applyArkanoidBonuses(this);
+        return;
+    }
+
+    method void addBall() {
+        var Ball ball;
+        if (ballsCount = 2) {
+            return;
+        }
+        let ball = Ball.new(7, platform);
+        let balls[ballsCount] = ball;
+        do ball.allowMove();
+        let ballsCount = ballsCount + 1;
+        do platform.updateBallsCount(ballsCount);
         return;
     }
 
     method void update() {
         do movePlatform();
-        do ball.move();
+        do moveBalls();
         do updateBrickArray();
         do applyBonuses();
-        if (ball.checkIsFallen()) {
+        if (checkBallsFallen()) {
             let gameOver = true;
             let gameLost = true;
             return;
         }
         do Sys.wait(5);
         return;
+    }
+
+    method void moveBalls() {
+        var Ball ball;
+        var int counter;
+        while (~(counter = ballsCount)) {
+            let ball = balls[counter];
+            do ball.move();
+            let counter = counter + 1;
+        }
+        return;
+    }
+
+    method void updateBallsSpeed(int speedApplier) {
+        var Ball ball;
+        var int counter;
+        while (~(counter = ballsCount)) {
+            let ball = balls[counter];
+            do ball.applySpeed(speedApplier);
+            let counter = counter + 1;
+        }
+        return;
+    }
+
+    method boolean checkBallsFallen() {
+        var Ball ballCur, ballLast;
+        var boolean isFallen;
+        var int counter;
+        while (counter < ballsCount) {
+            let ballCur = balls[counter];
+            let isFallen = ballCur.checkIsFallen();
+            if (isFallen) {
+                let ballLast = balls[ballsCount - 1];
+                let balls[counter] = ballLast;
+                do ballCur.erase();
+                let ballsCount = ballsCount - 1;
+                do platform.updateBallsCount(ballsCount);
+            }
+            let counter = counter + 1;
+        }
+        return (ballsCount = 0);
     }
 
     method void setGameLost() {
@@ -79,7 +149,7 @@ class Arkanoid {
             }
         }
         let speedApplier = destroyedBlocks / partToIncreaseSpeed + 1;
-        do ball.applySpeed(speedApplier);
+        do updateBallsSpeed(speedApplier);
         if (destroyedBlocks = bricksCount) {
             let gameOver = true;
             let gameWon = true;
@@ -105,7 +175,7 @@ class Arkanoid {
         let seed = Keyboard.readInt("Seed: ");
         do Random.setSeed(seed);
         let level = Random.range(1, 3);
-        let bricksArray = LevelCreator.getLevel(level, ball, platform);
+        let bricksArray = LevelCreator.getLevel(level, balls, platform);
         let bricksCount = LevelCreator.getLevelCount(level);
         return;
     }
@@ -113,6 +183,7 @@ class Arkanoid {
     method void run() {
         var boolean hasStarted;
         var char key;
+        var Ball ball;
         do Helper.output("Press ENTER to start!");
         while (~gameOver) {
             while ((key = 0) & (~gameOver)) {
@@ -123,6 +194,7 @@ class Arkanoid {
             if (key = 128 & ~hasStarted) {
                 let hasStarted = true;
                 do Screen.clearScreen();
+                let ball = balls[0];
                 do ball.allowMove();
             }
             if (key = 81 & hasStarted) {

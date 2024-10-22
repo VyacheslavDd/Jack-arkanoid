@@ -11,9 +11,10 @@ class Bonus {
     field String bonusName;
     
     function void setupBonuses() {
-        let bonusesCases = Array.new(2);
+        let bonusesCases = Array.new(3);
         let bonusesCases[0] = "BigPlatform";
-        let bonusesCases[1] = "SmallPlatform";
+        let bonusesCases[1] = "AddBall";
+        let bonusesCases[2] = "SmallPla";
         return;
     }
 
@@ -24,7 +25,7 @@ class Bonus {
         let size = 7;
         let xPos = x;
         let yPos = y;
-        let bonusName = bonusesCases[Random.range(0, 1)];
+        let bonusName = bonusesCases[Random.range(0, 2)];
         return this;
     }
 
@@ -57,6 +58,9 @@ class Bonus {
         if (Helper.areStringsEqual(bonusName, bonusesCases[1])) {
             do BonusBroker.applySmallerPlatform();
         }
+        if (Helper.areStringsEqual(bonusName, bonusesCases[2])) {
+            do BonusBroker.applyNewBall();
+        }
         return;
     }
 
@@ -80,6 +84,7 @@ class Bonus {
             do erase();
             let canMove = false;
             do sendBonusMessages();
+            do dispose();
         }
         return;
     }
