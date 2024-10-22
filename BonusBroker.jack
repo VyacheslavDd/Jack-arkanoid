@@ -1,0 +1,27 @@
+class BonusBroker {
+
+    static boolean makeBiggerPlatform;
+    static boolean makeSmallerPlatform;
+
+    function void applyPlatformBonuses(Platform platform) {
+        if (makeBiggerPlatform) {
+            do platform.makeBigger();
+            let makeBiggerPlatform = false;
+        }
+        if (makeSmallerPlatform) {
+            do platform.makeSmaller();
+            let makeSmallerPlatform = false;
+        }
+        return;
+    }
+
+    function void applyBiggerPlatform() {
+        let makeBiggerPlatform = true;
+        return;
+    }
+
+    function void applySmallerPlatform() {
+        let makeSmallerPlatform = true;
+        return;
+    }
+}

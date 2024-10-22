@@ -17,6 +17,7 @@ class Arkanoid {
         let direction = 0;
         let platform = Platform.new(50, 10);
         let ball = Ball.new(7, platform);
+        do Bonus.setupBonuses();
         do setupLevel();
         let partToIncreaseSpeed = bricksCount / 3;
         return this;
@@ -41,10 +42,16 @@ class Arkanoid {
         return;
     }
 
+    method void applyBonuses() {
+        do BonusBroker.applyPlatformBonuses(platform);
+        return;
+    }
+
     method void update() {
         do movePlatform();
         do ball.move();
         do updateBrickArray();
+        do applyBonuses();
         if (ball.checkIsFallen()) {
             let gameOver = true;
             let gameLost = true;
@@ -98,7 +105,7 @@ class Arkanoid {
         let seed = Keyboard.readInt("Seed: ");
         do Random.setSeed(seed);
         let level = Random.range(1, 3);
-        let bricksArray = LevelCreator.getLevel(level, ball);
+        let bricksArray = LevelCreator.getLevel(level, ball, platform);
         let bricksCount = LevelCreator.getLevelCount(level);
         return;
     }

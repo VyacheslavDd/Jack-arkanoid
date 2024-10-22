@@ -7,16 +7,23 @@ class Brick {
     field int requiredHitAmount;
     field int currentHitAmount;
     field boolean isDestroyed;
-
+    field Bonus bonus;
+    field Platform platform;
     field Ball ball;
 
-    constructor Brick new(int x, int y, int l, int h, int hits, Ball b) {
+    constructor Brick new(int x, int y, int l, int h, int hits, Ball b, Platform p) {
+        var int value;
         let xPos = x;
         let yPos = y;
         let length = l;
         let height = h;
         let requiredHitAmount = hits;
         let ball = b;
+        let platform = p;
+        let value = Random.range(1, 10);
+        if (value > 8) {
+            let bonus = Bonus.new((xPos + (length / 2)), yPos, platform);
+        }
         do draw();
         return this;
     }
@@ -29,6 +36,9 @@ class Brick {
     }
 
     method void dispose() {
+        if (~(bonus = null)) {
+            do bonus.dispose();
+        }
         do Memory.deAlloc(this);
         return;
     }
@@ -67,11 +77,15 @@ class Brick {
 
     method void update() {
         if (isDestroyed) {
+         if (~(bonus = null)) {
+            do bonus.update();
+         }
          return;
         }
         do checkCollisionWithBall();
         if ((currentHitAmount = requiredHitAmount) | (currentHitAmount > requiredHitAmount)) {
             let isDestroyed = true;
+            do bonus.onBrickDestroy();
             do erase();
             return;
         }

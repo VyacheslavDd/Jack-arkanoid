@@ -42,4 +42,20 @@ class Helper {
         }
         return 2;
     }
+
+    function boolean areStringsEqual(String a, String b) {
+        var int aLength, bLength, i;
+        let aLength = a.length();
+        let bLength = b.length();
+        if (~(aLength = bLength)) {
+            return false;
+        }
+        while (i < aLength) {
+            if (~(a.charAt(i) = b.charAt(i))) {
+                return false;
+            }
+            let i = i + 1;
+        }
+        return true;
+    }
 }

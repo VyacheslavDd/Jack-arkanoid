@@ -1,0 +1,105 @@
+class Bonus {
+    static Array bonusesCases;
+
+    field Platform platform;
+    field int xPos;
+    field int yPos;
+    field int dX;
+    field int dY;
+    field int size;
+    field boolean canMove;
+    field String bonusName;
+    
+    function void setupBonuses() {
+        let bonusesCases = Array.new(2);
+        let bonusesCases[0] = "BigPlatform";
+        let bonusesCases[1] = "SmallPlatform";
+        return;
+    }
+
+    constructor Bonus new(int x, int y, Platform p) {
+        let platform = p;
+        let dX = 0;
+        let dY = 2;
+        let size = 7;
+        let xPos = x;
+        let yPos = y;
+        let bonusName = bonusesCases[Random.range(0, 1)];
+        return this;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method void onBrickDestroy() {
+        let canMove = true;
+        return;
+    }
+
+    method void erase() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(xPos, yPos, xPos + size, yPos + size);
+        do Screen.setColor(true);
+        return;
+    }
+
+    method void draw() {
+        do Screen.drawRectangle(xPos, yPos, xPos + size, yPos + size);
+        return; 
+    }
+
+    method void sendBonusMessages() {
+        if (Helper.areStringsEqual(bonusName, bonusesCases[0])) {
+            do BonusBroker.applyBiggerPlatform();
+        }
+        if (Helper.areStringsEqual(bonusName, bonusesCases[1])) {
+            do BonusBroker.applySmallerPlatform();
+        }
+        return;
+    }
+
+    method void checkCollisions() {
+        var int bottom, right, platformSurface, platformBottom, platformLeftX, platformRightX;
+        var boolean inYZone, inXZone;
+        let bottom = getBottom();
+        if ((bottom + 2) > 255) {
+            do erase();
+            let canMove = false;
+            return;
+        }
+        let right = getRight();
+        let platformSurface = platform.getSurfaceY();
+        let platformBottom = platform.getBottom();
+        let platformLeftX = platform.getLeftX();
+        let platformRightX = platform.getRightX();
+        let inYZone = ((bottom > platformSurface) | (yPos > platformSurface)) & (yPos < platformBottom);
+        let inXZone = (((xPos > platformLeftX) & (xPos < platformRightX)) | ((right > platformLeftX) & (right < platformRightX))); 
+        if (inYZone & inXZone) {
+            do erase();
+            let canMove = false;
+            do sendBonusMessages();
+        }
+        return;
+    }
+
+    method void update() {
+        if (~canMove) {
+            return;
+        }
+        do erase();
+        let yPos = yPos + dY;
+        do draw();
+        do checkCollisions();
+        return;
+    }
+
+    method void getBottom() {
+        return yPos + size;
+    }
+
+    method void getRight() {
+        return xPos + size;
+    }
+}

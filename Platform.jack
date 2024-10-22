@@ -72,11 +72,13 @@ class Platform {
     }
 
     method void makeSmaller() {
+        do erase();
         let length = initialLength - 20;
         return;
     }
 
     method void makeBigger() {
+        do erase();
         let length = initialLength + 20;
         return;
     }
