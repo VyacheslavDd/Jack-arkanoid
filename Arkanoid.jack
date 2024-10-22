@@ -17,12 +17,11 @@ class Arkanoid {
         do Screen.setColor(true);
         let direction = 0;
         let platform = Platform.new(50, 10);
-        let balls = Array.new(3);
-        let balls[0] = Ball.new(7, platform);
-        let ballsCount = 1;
-        do platform.updateBallsCount(ballsCount);
         do Bonus.setupBonuses();
         do setupLevel();
+        let balls = Array.new(4);
+        let balls[0] = Ball.new(7, platform, bricksArray, bricksCount);
+        let ballsCount = 1;
         let partToIncreaseSpeed = bricksCount / 3;
         return this;
     }
@@ -65,14 +64,13 @@ class Arkanoid {
 
     method void addBall() {
         var Ball ball;
-        if (ballsCount = 2) {
+        if (ballsCount = 3) {
             return;
         }
-        let ball = Ball.new(7, platform);
+        let ball = Ball.new(7, platform, bricksArray, bricksCount);
         let balls[ballsCount] = ball;
         do ball.allowMove();
         let ballsCount = ballsCount + 1;
-        do platform.updateBallsCount(ballsCount);
         return;
     }
 
@@ -124,7 +122,6 @@ class Arkanoid {
                 let balls[counter] = ballLast;
                 do ballCur.erase();
                 let ballsCount = ballsCount - 1;
-                do platform.updateBallsCount(ballsCount);
             }
             let counter = counter + 1;
         }
@@ -175,7 +172,7 @@ class Arkanoid {
         let seed = Keyboard.readInt("Seed: ");
         do Random.setSeed(seed);
         let level = Random.range(1, 3);
-        let bricksArray = LevelCreator.getLevel(level, balls, platform);
+        let bricksArray = LevelCreator.getLevel(level, platform);
         let bricksCount = LevelCreator.getLevelCount(level);
         return;
     }

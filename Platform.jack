@@ -83,13 +83,4 @@ class Platform {
         let length = initialLength + 20;
         return;
     }
-
-    method void updateBallsCount(int count) {
-        let ballsCount = count;
-        return;
-    }
-
-    method int getBallsCount() {
-        return ballsCount;
-    }
 }

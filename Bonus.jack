@@ -13,8 +13,8 @@ class Bonus {
     function void setupBonuses() {
         let bonusesCases = Array.new(3);
         let bonusesCases[0] = "BigPlatform";
-        let bonusesCases[1] = "AddBall";
-        let bonusesCases[2] = "SmallPla";
+        let bonusesCases[1] = "SmallPlatform";
+        let bonusesCases[2] = "AddBall";
         return;
     }
 

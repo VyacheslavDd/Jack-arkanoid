@@ -7,10 +7,14 @@ class Ball {
     field boolean isFallen;
     field int radius;
     field int minimumSpeed;
+    field Array bricksArray;
+    field int bricksCount;
 
     field boolean canMove;
 
-    constructor Ball new(int r, Platform p) {
+    constructor Ball new(int r, Platform p, Array bricks, int brickCount) {
+        let bricksArray = bricks;
+        let bricksCount = brickCount;
         let platform = p;
         let radius = r;
         let minimumSpeed = 1;
@@ -73,6 +77,42 @@ class Ball {
         return;
     }
 
+    method void processCollisionsWithBricks() {
+        var int ballLeft, ballRight, ballUp, ballDown, brickUp, brickDown, brickLeft, brickRight, counter;
+        var Brick brick;
+        while (~(counter = bricksCount)) {
+            let brick = bricksArray[counter];
+            if (~brick.gotDestroyed()) {
+                let ballLeft = getLeft();
+                let ballRight = getRight();
+                let ballUp = getUp();
+                let ballDown = getDown();
+                let brickUp = brick.getUp();
+                let brickLeft = brick.getLeft();
+                let brickRight = brick.getRight();
+                let brickDown = brick.getDown();
+                if ((xPos > brickLeft) & (xPos < brickRight) & (ballUp < brickDown) & (ballUp > brickUp)) {
+                    do brick.onHit();
+                    do applyBrickCollision(1, -1);
+                }
+                if ((xPos > brickLeft) & (xPos < brickRight) & (ballDown > brickUp) & (ballDown < brickDown)) {
+                    do brick.onHit();
+                    do applyBrickCollision(1, -1);
+                }
+                if ((yPos > brickUp) & (yPos < brickDown) & (ballLeft < brickRight) & (ballLeft > brickLeft)) {
+                    do brick.onHit();
+                    do applyBrickCollision(-1, 1);
+                }
+                if ((yPos > brickUp) & (yPos < brickDown) & (ballRight > brickLeft) & (ballRight < brickRight)) {
+                    do brick.onHit();
+                    do applyBrickCollision(-1, 1);
+                }
+            }
+            let counter = counter + 1;
+        }
+        return;
+    }
+
     method void moveAndCheck() {
         var int xRadius, yRadius;
         let yRadius = Helper.helpCalculateRadiusSign(dY, radius);
@@ -90,12 +130,12 @@ class Ball {
             let isFallen = true;
             do erase();
             let canMove = false;
-
             return;
         }
         let xPos = xPos + dX;
         let yPos = yPos + dY;
         do processCollisionWithPlatform();
+        do processCollisionsWithBricks();
         return;
     }
 
