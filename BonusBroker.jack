@@ -19,7 +19,7 @@ class BonusBroker {
     function void applyArkanoidBonuses(Arkanoid arkanoid) {
         if (addBall) {
             do arkanoid.addBall();
-            let addBall = fa
+            let addBall = false;
         }
         return;
     }
